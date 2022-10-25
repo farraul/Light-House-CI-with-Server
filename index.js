@@ -1,25 +1,28 @@
-const express = require('express');
-const colors = require('colors');
-const morgan = require('morgan');
-const logger = require('./config/winston');
+const { createServer } = require('@lhci/server');
+const shell = require('shelljs')
 
 
-const app = express();
-// const PORT = 3000;
-let PORT = process.env.YOUR_PORT || process.env.PORT || 3000;
+
+console.log("Inicio index.js")
+//console.log("process", process.env);
+
+createServer({
+  //port: process.env.PORT,
+
+  port: 9001,
+
+  storage: {
+    storageMethod: 'sql',
+    sqlDialect: 'sqlite',
+    sqlDatabasePath: './db.sql',
+  },
+}).then(({port}) => {
+  
+  console.log("port: ", port)
+
+ //shell.exec(`lhci autorun`)
+})
 
 
-//Middleware
-app.use(morgan('combined', { stream: logger.stream }));
-app.use(express.json());
+console.log("Final index.js")
 
-//Rutas
-app.get('/', (req, res) => {res.send('Bienvenidos a Express con Raul bien con trabajadores');});
-
-const router = require('./router.js');
-app.use(router);
-
-
-app.listen(PORT, () => {
-    console.log(`Server on port ${PORT}`.bgGreen.black);
-});
